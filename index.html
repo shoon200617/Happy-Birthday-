@@ -1,0 +1,1164 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You Got A Mail! — Happy Birthday</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts for authentic typography matching the aesthetic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Fredoka:wght@600;700&family=Great+Vibes&family=Inter:wght@300;400;500;600&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Tone.js for subtle sound effects without external URLs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navyDeep: '#0e2759',
+            navyDark: '#091a3d',
+            navyLight: '#183b82',
+            softBlue: '#a3c1f7',
+            creamWhite: '#fcfcfa',
+          },
+          fontFamily: {
+            pixel: ['"Silkscreen"', 'monospace'],
+            serifHero: ['"Cormorant Garamond"', 'serif'],
+            script: ['"Great Vibes"', 'cursive'],
+            sticker: ['"Fredoka"', 'sans-serif'],
+            sans: ['"Inter"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrapbook & Envelope Animations */
+    body {
+      background-color: #0e2759;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* 3D Envelope Styling */
+    .envelope-wrapper {
+      perspective: 1200px;
+    }
+
+    .envelope {
+      position: relative;
+      width: 300px;
+      height: 195px;
+      background: linear-gradient(145deg, #12316e, #0a1d44);
+      border-radius: 6px;
+      box-shadow: 0 20px 35px -10px rgba(6, 18, 44, 0.55), 0 8px 15px -5px rgba(0,0,0,0.3);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+
+    @media (min-width: 640px) {
+      .envelope {
+        width: 340px;
+        height: 220px;
+      }
+    }
+
+    .envelope:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    /* Inner Letter inside Envelope */
+    .envelope-letter {
+      position: absolute;
+      left: 5%;
+      bottom: 8px;
+      width: 90%;
+      height: 85%;
+      background: #ffffff;
+      border-radius: 4px;
+      z-index: 2;
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.35s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      color: #0e2759;
+    }
+
+    .envelope.open .envelope-letter {
+      transform: translateY(-115px);
+    }
+
+    /* Envelope Front Pocket (Left, Right, Bottom folds) */
+    .envelope-pocket {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .envelope-pocket::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #143678 0%, #0d2556 100%);
+      clip-path: polygon(0 0, 50% 54%, 0 100%);
+    }
+
+    .envelope-pocket::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(225deg, #143678 0%, #0c224f 100%);
+      clip-path: polygon(100% 0, 50% 54%, 100% 100%);
+    }
+
+    .envelope-bottom {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: linear-gradient(0deg, #0b204a 0%, #133373 100%);
+      clip-path: polygon(0 100%, 50% 48%, 100% 100%);
+      border-radius: 0 0 6px 6px;
+      pointer-events: none;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.25);
+    }
+
+    /* Top Flap */
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #173c85 0%, #0f295e 100%);
+      clip-path: polygon(0 0, 100% 0, 50% 58%);
+      transform-origin: top center;
+      transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s linear 0.3s;
+      z-index: 5;
+      border-radius: 6px 6px 0 0;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.35));
+    }
+
+    .envelope.open .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    /* Wax Seal */
+    .wax-seal {
+      position: absolute;
+      top: 54%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2754a8, #0f2a61 70%, #08183b 100%);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.45), inset 0 2px 4px rgba(255,255,255,0.25), inset 0 -3px 6px rgba(0,0,0,0.5);
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      border: 2px solid rgba(163, 193, 247, 0.22);
+    }
+
+    .envelope:hover .wax-seal {
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .envelope.open .wax-seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+      pointer-events: none;
+    }
+
+    /* Navy & White Gingham Checkered Pattern */
+    .gingham-pattern {
+      background-color: #ffffff;
+      background-image:
+        linear-gradient(90deg, rgba(14, 39, 89, 0.78) 50%, transparent 50%),
+        linear-gradient(rgba(14, 39, 89, 0.78) 50%, transparent 50%);
+      background-size: 24px 24px;
+    }
+
+    /* Sticker Text Outline Effect ("BIRTHDAY BOY") */
+    .sticker-text {
+      color: #0e2759;
+      text-shadow:
+        -2px -2px 0 #ffffff,
+         2px -2px 0 #ffffff,
+        -2px  2px 0 #ffffff,
+         2px  2px 0 #ffffff,
+        -2px  0px 0 #ffffff,
+         2px  0px 0 #ffffff,
+         0px -2px 0 #ffffff,
+         0px  2px 0 #ffffff,
+         0px  4px 8px rgba(0,0,0,0.35);
+    }
+
+    /* Polaroid Frame */
+    .polaroid {
+      background: #ffffff;
+      padding: 8px 8px 26px 8px;
+      border-radius: 3px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+    }
+
+    .polaroid:hover {
+      transform: scale(1.06) rotate(0deg) !important;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.5);
+      z-index: 20;
+    }
+
+    /* Scroll Reveal Utility */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Floating subtle animation */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(2deg); }
+    }
+    .animate-float {
+      animation: floatSlow 4.5s ease-in-out infinite;
+    }
+
+    /* Confetti Particles */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      z-index: 9999;
+      border-radius: 2px;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #091a3d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #234994;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-softBlue selection:text-navyDeep">
+
+  <!-- ========================================================= -->
+  <!-- 1. ENVELOPE INTRO SCREEN                                  -->
+  <!-- ========================================================= -->
+  <section id="envelope-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-navyDeep p-4 transition-all duration-700">
+    <!-- Decorative subtle background stars -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+      <svg class="absolute top-12 left-10 w-6 h-6 text-white animate-pulse" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L14.5 9.5L23 12L14.5 14.5L12 23L9.5 14.5L1 12L9.5 9.5L12 1Z"/></svg>
+      <svg class="absolute bottom-16 right-12 w-8 h-8 text-softBlue animate-pulse" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L14.5 9.5L23 12L14.5 14.5L12 23L9.5 14.5L1 12L9.5 9.5L12 1Z"/></svg>
+      <svg class="absolute top-1/4 right-1/4 w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L14.5 9.5L23 12L14.5 14.5L12 23L9.5 14.5L1 12L9.5 9.5L12 1Z"/></svg>
+    </div>
+
+    <!-- Centered White Card Container (matches Screenshot 1) -->
+    <div class="relative w-full max-w-2xl bg-white rounded-md shadow-2xl py-12 px-6 sm:py-16 sm:px-12 flex flex-col items-center justify-center text-center transform transition-all duration-500" id="envelope-card-box">
+      
+      <!-- Pixel/Retro Header -->
+      <h1 class="font-pixel text-navyDeep text-2xl sm:text-3xl md:text-4xl tracking-wider mb-8 sm:mb-10 select-none">
+        YOU GOT A MAIL !
+      </h1>
+
+      <!-- Interactive 3D Envelope -->
+      <div class="envelope-wrapper mb-7">
+        <div id="envelope-trigger" class="envelope" role="button" tabindex="0" aria-label="Open birthday envelope">
+          <!-- Top Flap -->
+          <div class="envelope-flap"></div>
+
+          <!-- Inner Sliding Card Preview -->
+          <div class="envelope-letter">
+            <p class="font-script text-2xl sm:text-3xl text-navyDeep">Happy Birthday!</p>
+            <p class="font-sans text-[11px] text-gray-500 mt-1">Opening your surprise...</p>
+          </div>
+
+          <!-- Side & Bottom Folds -->
+          <div class="envelope-pocket"></div>
+          <div class="envelope-bottom"></div>
+
+          <!-- Wax Seal with Botanical/Leaf Emblem -->
+          <div class="wax-seal">
+            <svg class="w-7 h-7 text-softBlue/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prompt Caption -->
+      <p id="envelope-caption" class="font-sans italic text-xs sm:text-sm text-navyDeep/75 tracking-wide animate-pulse select-none">
+        tap the envelope for the surprise...
+      </p>
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- 2. MAIN BIRTHDAY EXPERIENCE                               -->
+  <!-- ========================================================= -->
+  <main id="main-experience" class="hidden opacity-0 transition-opacity duration-1000 pb-24">
+    
+    <!-- Floating Top Controls (Replay Envelope & Customize Card) -->
+    <div class="fixed top-4 right-4 z-40 flex items-center gap-2">
+      <button id="replay-envelope-btn" title="Close & Replay Envelope" class="bg-white/90 hover:bg-white text-navyDeep backdrop-blur-md px-3 py-2 rounded-full shadow-lg text-xs font-medium flex items-center gap-1.5 transition transform hover:scale-105">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="hidden sm:inline">Envelope</span>
+      </button>
+      <button id="open-customize-btn" class="bg-softBlue hover:bg-white text-navyDeep px-4 py-2 rounded-full shadow-lg text-xs font-semibold flex items-center gap-1.5 transition transform hover:scale-105">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+        <span>Customize Card</span>
+      </button>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- HERO BANNER SECTION (Screenshot 2)                      -->
+    <!-- ======================================================= -->
+    <header class="relative w-full h-[58vh] sm:h-[68vh] md:h-[78vh] max-h-[680px] overflow-hidden flex items-center justify-center shadow-2xl">
+      <!-- Background Hero Image with Warm Vintage Filter -->
+      <img id="display-hero-img"
+           src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1600&q=80"
+           onerror="this.src='https://placehold.co/1600x900/183b82/ffffff?text=Happy+Birthday'"
+           alt="Birthday Hero Banner"
+           class="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-1000" />
+      
+      <!-- Warm & Soft Vignette Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-b from-amber-900/20 via-navyDeep/30 to-navyDeep"></div>
+      <div class="absolute inset-0 bg-black/20"></div>
+
+      <!-- Hero Typography -->
+      <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-10">
+        <h1 id="display-hero-title" class="font-serifHero text-4xl sm:text-6xl md:text-7xl font-semibold tracking-wider text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.55)] uppercase leading-none">
+          HAPPY BIRTHDAY
+        </h1>
+        <p id="display-hero-subtitle" class="font-script text-3xl sm:text-5xl md:text-6xl text-softBlue -mt-2 sm:-mt-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)]">
+          to my favorite person
+        </p>
+      </div>
+    </header>
+
+    <!-- ======================================================= -->
+    <!-- SECTION 1: "A LETTER FOR YOU" (Screenshot 3)            -->
+    <!-- ======================================================= -->
+    <section class="reveal-section relative max-w-5xl mx-auto px-4 sm:px-8 pt-10 sm:pt-16 pb-16">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 items-center">
+        
+        <!-- Left Side: Two Tilted Polaroids + Star Accents -->
+        <div class="md:col-span-5 relative flex flex-col items-center justify-center py-4">
+          <!-- Decorative White/Blue Stars -->
+          <svg class="w-6 h-6 text-softBlue/80 absolute -bottom-2 left-6 sm:left-10 animate-float" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.6-6.3 4.6 2.3-7-6-4.6h7.6z"/></svg>
+          <svg class="w-4 h-4 text-white/70 absolute bottom-6 left-2 sm:left-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.6-6.3 4.6 2.3-7-6-4.6h7.6z"/></svg>
+          <svg class="w-5 h-5 text-softBlue/60 absolute top-2 right-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7-6.3-4.6-6.3 4.6 2.3-7-6-4.6h7.6z"/></svg>
+
+          <!-- Top Polaroid -->
+          <div class="polaroid w-44 sm:w-48 -rotate-6 -translate-x-8 sm:-translate-x-10 z-10 cursor-pointer" onclick="openLightbox(document.getElementById('display-letter-photo-1').src)">
+            <div class="aspect-square overflow-hidden bg-gray-100">
+              <img id="display-letter-photo-1"
+                   src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80"
+                   onerror="this.src='https://placehold.co/400x400/e2e8f0/0e2759?text=Memory+1'"
+                   alt="Memory 1"
+                   class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <!-- Bottom Overlapping Polaroid -->
+          <div class="polaroid w-48 sm:w-52 rotate-3 translate-x-6 sm:translate-x-8 -mt-12 z-20 cursor-pointer" onclick="openLightbox(document.getElementById('display-letter-photo-2').src)">
+            <div class="aspect-square overflow-hidden bg-gray-100">
+              <img id="display-letter-photo-2"
+                   src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80"
+                   onerror="this.src='https://placehold.co/400x400/e2e8f0/0e2759?text=Memory+2'"
+                   alt="Memory 2"
+                   class="w-full h-full object-cover" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Stacked White Stationery Card with Blue Floral Cluster -->
+        <div class="md:col-span-7 relative">
+          <!-- Stacked Paper Layers Behind -->
+          <div class="absolute inset-0 bg-white/80 rounded-sm transform rotate-2 translate-x-2 translate-y-2 shadow-lg"></div>
+          <div class="absolute inset-0 bg-white/90 rounded-sm transform -rotate-1 -translate-x-1 translate-y-1 shadow-md"></div>
+
+          <!-- Main Letter Sheet -->
+          <div class="relative bg-creamWhite text-navyDeep rounded-sm shadow-2xl px-7 py-9 sm:px-12 sm:py-11 border border-slate-100">
+            
+            <!-- Decorative Blue Flowers Cluster on Top-Left Edge (SVG Illustration) -->
+            <div class="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-24 h-24 sm:w-28 sm:h-28 pointer-events-none drop-shadow-md">
+              <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Leaves -->
+                <path d="M35 85 C15 80, 10 60, 28 55 C40 52, 42 72, 35 85Z" fill="#1e428a"/>
+                <path d="M75 30 C95 20, 105 38, 88 48 C76 54, 70 40, 75 30Z" fill="#183673"/>
+                <path d="M25 35 C12 22, 25 8, 40 20 C48 28, 36 42, 25 35Z" fill="#2952a3"/>
+                <!-- Flower 1 (Deep Navy Blue) -->
+                <g transform="translate(48, 42)">
+                  <circle cx="0" cy="-14" r="11" fill="#1b3f8b"/>
+                  <circle cx="13" cy="-4" r="11" fill="#234ca3"/>
+                  <circle cx="8" cy="11" r="11" fill="#163575"/>
+                  <circle cx="-8" cy="11" r="11" fill="#1f4699"/>
+                  <circle cx="-13" cy="-4" r="11" fill="#2855b5"/>
+                  <circle cx="0" cy="0" r="6" fill="#dbeafe"/>
+                  <circle cx="0" cy="0" r="3" fill="#0e2759"/>
+                </g>
+                <!-- Flower 2 (Soft Periwinkle Blue) -->
+                <g transform="translate(32, 68) scale(0.85)">
+                  <circle cx="0" cy="-13" r="10" fill="#608be0"/>
+                  <circle cx="12" cy="-4" r="10" fill="#7aa2f0"/>
+                  <circle cx="8" cy="10" r="10" fill="#4c75c9"/>
+                  <circle cx="-8" cy="10" r="10" fill="#6993e6"/>
+                  <circle cx="-12" cy="-4" r="10" fill="#8bb0f7"/>
+                  <circle cx="0" cy="0" r="5" fill="#ffffff"/>
+                </g>
+                <!-- Flower 3 (Accent Blossom) -->
+                <g transform="translate(68, 62) scale(0.75)">
+                  <circle cx="0" cy="-12" r="10" fill="#14326e"/>
+                  <circle cx="11" cy="-3" r="10" fill="#1d4391"/>
+                  <circle cx="7" cy="10" r="10" fill="#0f2654"/>
+                  <circle cx="-7" cy="10" r="10" fill="#1a3d85"/>
+                  <circle cx="-11" cy="-3" r="10" fill="#2652ab"/>
+                  <circle cx="0" cy="0" r="5" fill="#bfdbfe"/>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Letter Heading -->
+            <h2 id="display-letter-heading" class="font-script text-4xl sm:text-5xl text-center text-navyDeep mb-5">
+              A letter for you
+            </h2>
+
+            <!-- Letter Body Content -->
+            <div id="display-letter-body" class="font-sans text-xs sm:text-sm leading-relaxed text-slate-700 text-center space-y-4 font-normal">
+              <p>
+                happy birthday, love! 🤍<br>
+                today is all about you and the happiness you bring into other people's lives. I hope your day is filled with genuine smiles, peaceful moments, and everything that makes your heart feel light. thank you for being someone so comforting, loving, and special to me.
+              </p>
+              <p>
+                I'm really grateful for your existence and for all the little moments we share together. no matter what happens, I'll always be cheering for you and wishing you the best. enjoy your day to the fullest!
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- SECTION 2: STAGGERED MEMORY COLLAGE GRID (Screenshot 4)  -->
+    <!-- ======================================================= -->
+    <section class="reveal-section max-w-4xl mx-auto px-4 sm:px-8 py-14 sm:py-20">
+      <!-- Desktop/Tablet 5-Column Staggered Diamond/Wave Layout, Mobile 2-Col Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-5 sm:gap-6 items-center justify-items-center">
+        
+        <!-- Col 1: Photo 1 (Centered vertically) -->
+        <div class="w-full max-w-[165px] sm:translate-y-4">
+          <div class="bg-white p-1.5 rounded-sm shadow-xl hover:scale-105 transition duration-300 cursor-pointer" onclick="openLightbox(this.querySelector('img').src)">
+            <img id="collage-img-1" src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&q=80" onerror="this.src='https://placehold.co/300x300/183b82/ffffff?text=1'" alt="Collage 1" class="w-full aspect-square object-cover" />
+          </div>
+        </div>
+
+        <!-- Col 2: Photo 2 (Top) & Photo 3 (Bottom) -->
+        <div class="w-full flex flex-col gap-5 sm:gap-8 items-center">
+          <div class="w-full max-w-[165px] bg-white p-1.5 rounded-sm shadow-xl hover:scale-105 transition duration-300 cursor-pointer" onclick="openLightbox(this.querySelector('img').src)">
+            <img id="collage-img-2" src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=500&q=80" onerror="this.src='https://placehold.co/300x300/183b82/ffffff?text=2'" alt="Collage 2" class="w-full aspect-square object-cover" />
+          </div>
+          <div class="w-full max-w-[165px] bg-white p-1.5 rounded-sm shadow-xl hover:scale-105 transition duration-300 cursor-pointer" onclick="openLightbox(this.querySelector('img').src)">
+            <img id="collage-img-3" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80" onerror="this.src='https://placehold.co/300x300/183b82/ffffff?text=3'" alt="Collage 3" class="w-full aspect-square object-cover" />
+          </div>
+        </div>
+
+        
+        
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- SECTION 3: "BIRTHDAY BOY" & MEDIA PLAYER (Screenshots 5-6) -->
+    <!-- ======================================================= -->
+    <section class="reveal-section max-w-5xl mx-auto px-4 sm:px-8 py-14 sm:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center">
+        
+        <!-- Left Side: Polaroid + "BIRTHDAY BOY" Sticker + Bouquet & Balloons -->
+        <div class="md:col-span-5 relative flex items-center justify-center">
+          <div class="relative">
+            <!-- Sticker Badge on Top-Left -->
+            <div id="display-badge-text" class="font-sticker sticker-text text-2xl sm:text-3xl font-bold uppercase tracking-wide leading-none -rotate-6 absolute -top-6 -left-6 z-30 select-none text-center max-w-[180px]">
+              BIRTHDAY<br>BOY
+            </div>
+
+            <!-- Main Polaroid Frame -->
+            <div class="polaroid w-56 sm:w-64 relative z-10 cursor-pointer" onclick="openLightbox(document.getElementById('display-feature-photo').src)">
+              <div class="aspect-[4/5] overflow-hidden bg-gray-100">
+                <img id="display-feature-photo"
+                     src="https://images.unsplash.com/photo-1516589091380-5d8e87df6999?auto=format&fit=crop&w=600&q=80"
+                     onerror="this.src='https://placehold.co/400x500/e2e8f0/0e2759?text=Birthday+Star'"
+                     alt="Birthday Star"
+                     class="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            <!-- White Rose Bouquet Illustration (Bottom Right of Polaroid) -->
+            <div class="absolute -bottom-4 -right-6 z-20 w-20 h-24 pointer-events-none drop-shadow-lg">
+              <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Wrapping Paper Cone -->
+                <path d="M22 45 L78 45 L55 112 L45 112 Z" fill="#6488c9" stroke="#ffffff" stroke-width="1.5"/>
+                <path d="M28 45 L50 110 L72 45 Z" fill="#89a8e0"/>
+                <!-- Ribbon Bow -->
+                <path d="M38 82 Q50 75 62 82 Q50 90 38 82 Z" fill="#1e3a8a"/>
+                <path d="M46 82 L38 102 M54 82 L62 102" stroke="#1e3a8a" stroke-width="3" stroke-linecap="round"/>
+                <!-- White & Soft Blue Roses -->
+                <circle cx="38" cy="40" r="11" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="62" cy="40" r="11" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="50" cy="30" r="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                <circle cx="50" cy="48" r="11" fill="#e0f2fe" stroke="#93c5fd" stroke-width="1.5"/>
+                <!-- Rose Swirls -->
+                <path d="M47 30 a3 3 0 1 1 6 0" stroke="#94a3b8" stroke-width="1.2" fill="none"/>
+                <path d="M35 40 a3 3 0 1 1 6 0" stroke="#94a3b8" stroke-width="1.2" fill="none"/>
+                <path d="M59 40 a3 3 0 1 1 6 0" stroke="#94a3b8" stroke-width="1.2" fill="none"/>
+              </svg>
+            </div>
+
+            <!-- Hand-Drawn White Outline Balloons (Far Bottom Right) -->
+            <div class="absolute -bottom-2 -right-16 z-10 w-16 h-24 pointer-events-none opacity-85 animate-float">
+              <svg viewBox="0 0 80 120" fill="none" stroke="#ffffff" stroke-width="1.5">
+                <ellipse cx="28" cy="32" rx="16" ry="20" transform="rotate(-12 28 32)"/>
+                <path d="M31 52 Q35 78 28 105"/>
+                <ellipse cx="52" cy="42" rx="15" ry="19" transform="rotate(14 52 42)"/>
+                <path d="M48 61 Q42 84 46 108"/>
+                <path d="M22 92 Q38 88 54 94" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+<!-- Right Side: Framed YouTube / Birthday Video Player -->
+        <div class="md:col-span-7 flex flex-col items-center">
+          <!-- Glowing White Rounded Frame -->
+          <div class="w-full max-w-lg rounded-2xl p-2 sm:p-2.5 border-2 border-white/85 bg-navyDark/60 shadow-[0_0_30px_rgba(163,193,247,0.28)]">
+            <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black">
+              <iframe
+                id="youtube-player-iframe"
+                class="w-full h-full"
+                src="https://www.youtube.com/embed/5u4xTa3LR2U?enablejsapi=1&rel=0"
+                title="Birthday Celebration Video"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+
+          <!-- Custom Media Player Controls (Matches Screenshots 5 & 6) -->
+          <div class="w-full max-w-xs sm:max-w-sm mt-5 flex flex-col items-center">
+            <!-- Progress Track & Scrubber Dot -->
+            <div class="w-full flex items-center gap-2 mb-3">
+              <div id="media-progress-bar" class="relative w-full h-1 bg-white/30 rounded-full cursor-pointer">
+                <div id="media-progress-fill" class="h-full w-1/3 bg-white rounded-full transition-all duration-300"></div>
+                <div id="media-progress-dot" class="w-3 h-3 bg-white rounded-full shadow absolute top-1/2 left-1/3 -translate-y-1/2 -translate-x-1/2 transition-all duration-300"></div>
+              </div>
+            </div>
+
+            <!-- Transport Buttons: Previous, Play/Pause, Next -->
+            <div class="flex items-center justify-center gap-7">
+              <button id="prev-track-btn" title="Restart Video" class="text-white/85 hover:text-white transition transform active:scale-90">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+              </button>
+
+              <button id="play-pause-btn" title="Play / Pause" class="w-10 h-10 rounded-full bg-white text-navyDeep flex items-center justify-center shadow-lg hover:scale-105 transition transform active:scale-95">
+                <!-- Pause / Play Icon -->
+                <svg id="play-icon" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="pause-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              </button>
+
+              <button id="next-track-btn" title="Next Birthday Track" class="text-white/85 hover:text-white transition transform active:scale-90">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+              </button>
+            </div>
+            <p id="track-caption" class="text-[11px] text-softBlue/80 mt-2 tracking-wide">
+              ♪ Happy Birthday Celebration Mix
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- SECTION 4: FINAL CLOSING NOTE CARD (Screenshot 7)       -->
+    <!-- ======================================================= -->
+    <section class="reveal-section max-w-3xl mx-auto px-4 sm:px-8 pt-12 pb-20">
+      <div class="relative mx-auto max-w-xl">
+        
+        <!-- Offset Gingham/Checkered Backing Card -->
+        <div class="gingham-pattern absolute -bottom-3 -left-3 sm:-bottom-4 sm:-left-4 w-full h-full rounded-sm shadow-xl border border-white/20"></div>
+
+        <!-- Main White Note Card -->
+        <div class="relative bg-creamWhite text-navyDeep rounded-sm shadow-2xl px-6 py-8 sm:px-12 sm:py-10 text-center">
+          
+          <!-- Hand-Drawn Ribbon Bow at Top Center -->
+          <div class="w-14 h-9 mx-auto mb-3 text-slate-500">
+            <svg viewBox="0 0 80 50" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M40 22 C26 8, 12 14, 18 26 C22 33, 34 26, 40 22 Z"/>
+              <path d="M40 22 C54 8, 68 14, 62 26 C58 33, 46 26, 40 22 Z"/>
+              <circle cx="40" cy="22" r="3.5" fill="#fcfcfa"/>
+              <path d="M38 25 L28 44 M42 25 L52 44"/>
+            </svg>
+          </div>
+
+          <!-- Closing Message -->
+          <p id="display-closing-message" class="font-sans text-xs sm:text-sm leading-relaxed text-slate-700 max-w-md mx-auto pb-6 sm:pb-4">
+            happy birthday to my favorite person 🤍<br>
+            thank you for making life feel softer, lighter,<br>
+            and happier. I hope today gives you the<br>
+            same love and warmth you always give to<br>
+            everyone around you 🌸
+          </p>
+
+          <!-- Bottom-Left Blue Flowers Cluster -->
+          <div class="absolute -bottom-5 -left-4 sm:-bottom-6 sm:-left-6 w-24 h-20 pointer-events-none drop-shadow">
+            <svg viewBox="0 0 110 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(30, 52)">
+                <circle cx="0" cy="-12" r="10" fill="#183b82"/>
+                <circle cx="11" cy="-3" r="10" fill="#2551ab"/>
+                <circle cx="7" cy="10" r="10" fill="#112b61"/>
+                <circle cx="-7" cy="10" r="10" fill="#1e4699"/>
+                <circle cx="-11" cy="-3" r="10" fill="#2c5ec4"/>
+                <circle cx="0" cy="0" r="5" fill="#dbeafe"/>
+              </g>
+              <g transform="translate(56, 56) scale(0.9)">
+                <circle cx="0" cy="-12" r="10" fill="#93c5fd"/>
+                <circle cx="11" cy="-3" r="10" fill="#bfdbfe"/>
+                <circle cx="7" cy="10" r="10" fill="#60a5fa"/>
+                <circle cx="-7" cy="10" r="10" fill="#93c5fd"/>
+                <circle cx="-11" cy="-3" r="10" fill="#dbeafe"/>
+                <circle cx="0" cy="0" r="4.5" fill="#1e3a8a"/>
+              </g>
+              <g transform="translate(80, 48) scale(0.8)">
+                <circle cx="0" cy="-12" r="10" fill="#0f2654"/>
+                <circle cx="11" cy="-3" r="10" fill="#193b80"/>
+                <circle cx="7" cy="10" r="10" fill="#0b1c40"/>
+                <circle cx="-7" cy="10" r="10" fill="#15326e"/>
+                <circle cx="-11" cy="-3" r="10" fill="#214ba1"/>
+                <circle cx="0" cy="0" r="4" fill="#93c5fd"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Bottom-Right Tilted Polaroid + Cute Navy Plush Bunny -->
+          <div class="relative sm:absolute sm:-bottom-8 sm:-right-10 mt-4 sm:mt-0 inline-flex items-end justify-center">
+            <!-- Cute Navy Plush Bunny Character -->
+            <div class="w-12 h-16 -mr-3 mb-1 z-30 pointer-events-none drop-shadow-md">
+              <svg viewBox="0 0 60 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ears -->
+                <rect x="17" y="4" width="9" height="28" rx="4.5" fill="#17387a"/>
+                <rect x="34" y="4" width="9" height="28" rx="4.5" fill="#17387a"/>
+                <!-- Head -->
+                <ellipse cx="30" cy="38" rx="16" ry="13" fill="#1c428f"/>
+                <!-- Eyes & Miffy X-Mouth -->
+                <circle cx="24" cy="37" r="1.6" fill="#091530"/>
+                <circle cx="36" cy="37" r="1.6" fill="#091530"/>
+                <path d="M28 41 L32 44 M32 41 L28 44" stroke="#091530" stroke-width="1.4" stroke-linecap="round"/>
+                <!-- Body & Arms -->
+                <rect x="18" y="49" width="24" height="24" rx="10" fill="#153370"/>
+                <ellipse cx="15" cy="58" rx="5" ry="8" transform="rotate(20 15 58)" fill="#1c428f"/>
+                <ellipse cx="45" cy="58" rx="5" ry="8" transform="rotate(-20 45 58)" fill="#1c428f"/>
+                <!-- Feet -->
+                <ellipse cx="23" cy="75" rx="6" ry="4" fill="#1c428f"/>
+                <ellipse cx="37" cy="75" rx="6" ry="4" fill="#1c428f"/>
+              </svg>
+            </div>
+
+            <!-- Small Tilted Polaroid -->
+            <div class="polaroid w-28 sm:w-32 rotate-6 z-20 cursor-pointer" onclick="openLightbox(document.getElementById('display-closing-photo').src)">
+              <div class="aspect-square overflow-hidden bg-gray-100">
+                <img id="display-closing-photo"
+                     src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=400&q=80"
+                     onerror="this.src='https://placehold.co/300x300/e2e8f0/0e2759?text=Us'"
+                     alt="Closing Memory"
+                     class="w-full h-full object-cover" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Subtle Footer Celebration Button -->
+      <div class="text-center mt-16">
+        <button id="celebrate-again-btn" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 px-5 py-2.5 rounded-full text-xs tracking-wider uppercase transition">
+          <span>✨ Toss More Confetti</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================= -->
+  <!-- 3. PHOTO LIGHTBOX MODAL                                   -->
+  <!-- ========================================================= -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeLightbox()">
+    <div class="relative max-w-lg w-full bg-white p-3 pb-10 rounded-md shadow-2xl transform transition-all" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="absolute -top-4 -right-4 w-9 h-9 bg-navyDeep text-white rounded-full shadow-lg flex items-center justify-center hover:bg-navyLight">
+        ✕
+      </button>
+      <img id="lightbox-img" src="" alt="Enlarged Memory" class="w-full max-h-[75vh] object-contain rounded-sm" />
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- 4. CUSTOMIZATION DRAWER MODAL                             -->
+  <!-- ========================================================= -->
+  <div id="customize-drawer" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex justify-end">
+    <div class="w-full max-w-md bg-white text-navyDeep h-full overflow-y-auto shadow-2xl p-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
+          <div>
+            <h3 class="font-bold text-lg text-navyDeep">Personalize Birthday Card</h3>
+            <p class="text-xs text-slate-500">Edit text, upload your own photos, or change the video.</p>
+          </div>
+          <button id="close-customize-btn" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700">✕</button>
+        </div>
+
+        <form id="customize-form" class="space-y-4 text-xs">
+          <!-- Hero Section -->
+          <div class="bg-slate-50 p-3.5 rounded-lg space-y-2.5 border border-slate-200/70">
+            <p class="font-semibold text-navyDeep uppercase tracking-wider text-[11px]">1. Hero Banner</p>
+            <div>
+              <label class="block text-slate-600 mb-1">Main Title</label>
+              <input type="text" id="input-hero-title" value="HAPPY BIRTHDAY" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep" />
+            </div>
+            <div>
+              <label class="block text-slate-600 mb-1">Cursive Subtitle</label>
+              <input type="text" id="input-hero-subtitle" value="to my favorite person" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep" />
+            </div>
+            <div>
+              <label class="block text-slate-600 mb-1">Hero Background Photo (Upload or URL)</label>
+              <input type="file" accept="image/*" onchange="handleImageUpload(event, 'display-hero-img')" class="w-full text-[11px] file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:bg-navyDeep file:text-white cursor-pointer" />
+            </div>
+          </div>
+
+          <!-- Letter Section -->
+          <div class="bg-slate-50 p-3.5 rounded-lg space-y-2.5 border border-slate-200/70">
+            <p class="font-semibold text-navyDeep uppercase tracking-wider text-[11px]">2. "A Letter For You"</p>
+            <div>
+              <label class="block text-slate-600 mb-1">Letter Title</label>
+              <input type="text" id="input-letter-heading" value="A letter for you" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep" />
+            </div>
+            <div>
+              <label class="block text-slate-600 mb-1">Letter Message</label>
+              <textarea id="input-letter-body" rows="4" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep">happy birthday, love! 🤍
+today is all about you and the happiness you bring into other people's lives. I hope your day is filled with genuine smiles, peaceful moments, and everything that makes your heart feel light. thank you for being someone so comforting, loving, and special to me.
+
+I'm really grateful for your existence and for all the little moments we share together. no matter what happens, I'll always be cheering for you and wishing you the best. enjoy your day to the fullest!</textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 mb-1">Polaroid 1</label>
+                <input type="file" accept="image/*" onchange="handleImageUpload(event, 'display-letter-photo-1')" class="w-full text-[10px]" />
+              </div>
+              <div>
+                <label class="block text-slate-600 mb-1">Polaroid 2</label>
+                <input type="file" accept="image/*" onchange="handleImageUpload(event, 'display-letter-photo-2')" class="w-full text-[10px]" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Collage Photos -->
+          <div class="bg-slate-50 p-3.5 rounded-lg space-y-2.5 border border-slate-200/70">
+            <p class="font-semibold text-navyDeep uppercase tracking-wider text-[11px]">3. Memory Collage (7 Photos)</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div><label class="text-slate-500">Photo 1</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-1')" class="w-full text-[10px]" /></div>
+              <div><label class="text-slate-500">Photo 2</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-2')" class="w-full text-[10px]" /></div>
+              <div><label class="text-slate-500">Photo 3</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-3')" class="w-full text-[10px]" /></div>
+              <div><label class="text-slate-500">Photo 4</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-4')" class="w-full text-[10px]" /></div>
+              <div><label class="text-slate-500">Photo 5</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-5')" class="w-full text-[10px]" /></div>
+              <div><label class="text-slate-500">Photo 6</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-6')" class="w-full text-[10px]" /></div>
+              <div class="col-span-2"><label class="text-slate-500">Photo 7</label><input type="file" accept="image/*" onchange="handleImageUpload(event, 'collage-img-7')" class="w-full text-[10px]" /></div>
+            </div>
+          </div>
+
+          <!-- Birthday Sticker & YouTube Video -->
+          <div class="bg-slate-50 p-3.5 rounded-lg space-y-2.5 border border-slate-200/70">
+            <p class="font-semibold text-navyDeep uppercase tracking-wider text-[11px]">4. Sticker & Video Player</p>
+            <div>
+              <label class="block text-slate-600 mb-1">Sticker Text (e.g., BIRTHDAY BOY / GIRL)</label>
+              <input type="text" id="input-badge-text" value="BIRTHDAY BOY" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep" />
+            </div>
+            <div>
+              <label class="block text-slate-600 mb-1">Featured Polaroid Photo</label>
+              <input type="file" accept="image/*" onchange="handleImageUpload(event, 'display-feature-photo')" class="w-full text-[10px]" />
+            </div>
+            <div>
+              <label class="block text-slate-600 mb-1">YouTube Video Link</label>
+              <input type="text" id="input-youtube-url" placeholder="https://www.youtube.com/watch?v=..." value="https://www.youtube.com/watch?v=5u4xTa3LR2U" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep" />
+            </div>
+          </div>
+
+          <!-- Closing Card -->
+          <div class="bg-slate-50 p-3.5 rounded-lg space-y-2.5 border border-slate-200/70">
+            <p class="font-semibold text-navyDeep uppercase tracking-wider text-[11px]">5. Final Closing Note</p>
+            <div>
+              <label class="block text-slate-600 mb-1">Closing Wish</label>
+              <textarea id="input-closing-message" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:border-navyDeep">happy birthday to my favorite person 🤍
+thank you for making life feel softer, lighter, and happier. I hope today gives you the same love and warmth you always give to everyone around you 🌸</textarea>
+            </div>
+            <div>
+              <label class="block text-slate-600 mb-1">Closing Polaroid Photo</label>
+              <input type="file" accept="image/*" onchange="handleImageUpload(event, 'display-closing-photo')" class="w-full text-[10px]" />
+            </div>
+          </div>
+        </form>
+      </div>
+<!-- Apply Button -->
+      <div class="pt-5 border-t border-slate-200 mt-6 flex gap-2">
+        <button id="save-customize-btn" class="w-full bg-navyDeep hover:bg-navyLight text-white font-semibold py-2.5 rounded-lg shadow transition">
+          Apply Changes
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-msg" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-white text-navyDeep px-5 py-2.5 rounded-full shadow-xl text-xs font-semibold opacity-0 pointer-events-none transition-opacity duration-300">
+    Card updated! ✨
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- JAVASCRIPT LOGIC & INTERACTIVITY                          -->
+  <!-- ========================================================= -->
+  <script>
+    // DOM Elements
+    const envelopeScreen = document.getElementById('envelope-screen');
+    const envelopeTrigger = document.getElementById('envelope-trigger');
+    const mainExperience = document.getElementById('main-experience');
+    const replayEnvelopeBtn = document.getElementById('replay-envelope-btn');
+    const celebrateAgainBtn = document.getElementById('celebrate-again-btn');
+
+    // Sound Synthesizer using Tone.js (Gentle magical chime when opening envelope)
+    function playChimeSound() {
+      try {
+        if (typeof Tone !== 'undefined') {
+          Tone.start();
+          const synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.05, decay: 0.3, sustain: 0.2, release: 1.2 }
+          }).toDestination();
+          synth.volume.value = -10;
+          const now = Tone.now();
+          synth.triggerAttackRelease('C5', '8n', now);
+          synth.triggerAttackRelease('E5', '8n', now + 0.12);
+          synth.triggerAttackRelease('G5', '8n', now + 0.24);
+          synth.triggerAttackRelease('B5', '4n', now + 0.36);
+        }
+      } catch (e) {
+        // Fallback silently if audio context is blocked
+      }
+    }
+
+    // Confetti Burst Generator
+    function launchConfetti(count = 65) {
+      const colors = ['#ffffff', '#a3c1f7', '#60a5fa', '#fde047', '#f472b6', '#93c5fd'];
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement('div');
+        piece.classList.add('confetti-piece');
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.top = '-12px';
+        piece.style.width = (Math.random() * 8 + 5) + 'px';
+        piece.style.height = (Math.random() * 8 + 5) + 'px';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        document.body.appendChild(piece);
+
+        const duration = Math.random() * 2200 + 1800;
+        const horizontalDrift = (Math.random() - 0.5) * 220;
+        const rotation = Math.random() * 720;
+
+        const animation = piece.animate([
+          { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+          { transform: `translate(${horizontalDrift}px, 105vh) rotate(${rotation}deg)`, opacity: 0.1 }
+        ], {
+          duration: duration,
+          easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        });
+
+        animation.onfinish = () => piece.remove();
+      }
+    }
+
+    // Open Envelope Sequence
+    let isOpened = false;
+    function openEnvelopeSequence() {
+      if (isOpened) return;
+      isOpened = true;
+
+      playChimeSound();
+      envelopeTrigger.classList.add('open');
+      launchConfetti(75);
+
+      // Transition from Envelope Screen to Main Birthday Website
+      setTimeout(() => {
+        envelopeScreen.style.opacity = '0';
+        envelopeScreen.style.transform = 'scale(1.06)';
+        
+        mainExperience.classList.remove('hidden');
+        // Force reflow
+        void mainExperience.offsetWidth;
+        mainExperience.style.opacity = '1';
+
+        setTimeout(() => {
+          envelopeScreen.classList.add('hidden');
+          triggerScrollReveals();
+        }, 700);
+      }, 1150);
+    }
+
+    envelopeTrigger.addEventListener('click', openEnvelopeSequence);
+    envelopeTrigger.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openEnvelopeSequence();
+      }
+    });
+
+    // Replay Envelope Button
+    replayEnvelopeBtn.addEventListener('click', () => {
+      isOpened = false;
+      envelopeTrigger.classList.remove('open');
+      envelopeScreen.classList.remove('hidden');
+      void envelopeScreen.offsetWidth;
+      envelopeScreen.style.opacity = '1';
+      envelopeScreen.style.transform = 'scale(1)';
+      
+      setTimeout(() => {
+        mainExperience.style.opacity = '0';
+        mainExperience.classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }, 500);
+    });
+
+    // Extra Confetti Button
+    celebrateAgainBtn.addEventListener('click', () => {
+      playChimeSound();
+      launchConfetti(60);
+    });
+
+    // Scroll Reveal Observer
+    function triggerScrollReveals() {
+      const sections = document.querySelectorAll('.reveal-section');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.12 });
+
+      sections.forEach(sec => observer.observe(sec));
+    }
+
+    // Lightbox Functions
+    function openLightbox(src) {
+      const modal = document.getElementById('lightbox-modal');
+      const img = document.getElementById('lightbox-img');
+      img.src = src;
+      modal.classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox-modal').classList.add('hidden');
+    }
+
+    // YouTube Custom Player Controls & Playlist
+    const playlist = [
+      { id: '5u4xTa3LR2U', title: '♪ Happy Birthday (20th Century Fox Style)' },
+      { id: 'inS9gAgSENE', title: '♪ Classic Happy Birthday Piano Melody' },
+      { id: 'nl62hhiBMYU', title: '♪ Aesthetic Lo-Fi Birthday Wishes' }
+    ];
+    let currentTrackIdx = 0;
+    let isPlaying = false;
+
+    const ytIframe = document.getElementById('youtube-player-iframe');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const prevTrackBtn = document.getElementById('prev-track-btn');
+    const nextTrackBtn = document.getElementById('next-track-btn');
+    const trackCaption = document.getElementById('track-caption');
+    const progressFill = document.getElementById('media-progress-fill');
+    const progressDot = document.getElementById('media-progress-dot');
+
+    function sendYouTubeCommand(func) {
+      if (ytIframe && ytIframe.contentWindow) {
+        ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: func,
+          args: []
+        }), '*');
+      }
+    }
+
+    playPauseBtn.addEventListener('click', () => {
+      if (!isPlaying) {
+        sendYouTubeCommand('playVideo');
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+        isPlaying = true;
+      } else {
+        sendYouTubeCommand('pauseVideo');
+        pauseIcon.classList.add('hidden');
+        playIcon.classList.remove('hidden');
+        isPlaying = false;
+      }
+    });
+
+    prevTrackBtn.addEventListener('click', () => {
+      currentTrackIdx = (currentTrackIdx - 1 + playlist.length) % playlist.length;
+      loadPlaylistTrack(currentTrackIdx);
+    });
+
+    nextTrackBtn.addEventListener('click', () => {
+      currentTrackIdx = (currentTrackIdx + 1) % playlist.length;
+      loadPlaylistTrack(currentTrackIdx);
+    });
+
+    function loadPlaylistTrack(index) {
+      const track = playlist[index];
+      ytIframe.src = `https://www.youtube.com/embed/${track.id}?enablejsapi=1&autoplay=1&rel=0`;
+      trackCaption.textContent = track.title;
+      playIcon.classList.add('hidden');
+      pauseIcon.classList.remove('hidden');
+      isPlaying = true;
+      progressFill.style.width = '15%';
+      progressDot.style.left = '15%';
+    }
+
+    // Simulated smooth progress animation when playing
+    setInterval(() => {
+      if (isPlaying) {
+        let currentWidth = parseFloat(progressFill.style.width) || 20;
+        currentWidth = currentWidth >= 98 ? 5 : currentWidth + 0.5;
+        progressFill.style.width = currentWidth + '%';
+        progressDot.style.left = currentWidth + '%';
+      }
+    }, 500);
+
+    // Customization Drawer Logic
+    const customizeDrawer = document.getElementById('customize-drawer');
+    const openCustomizeBtn = document.getElementById('open-customize-btn');
+    const closeCustomizeBtn = document.getElementById('close-customize-btn');
+    const saveCustomizeBtn = document.getElementById('save-customize-btn');
+    const toastMsg = document.getElementById('toast-msg');
+
+    openCustomizeBtn.addEventListener('click', () => {
+      customizeDrawer.classList.remove('hidden');
+    });
+
+    closeCustomizeBtn.addEventListener('click', () => {
+      customizeDrawer.classList.add('hidden');
+    });
+
+    customizeDrawer.addEventListener('click', (e) => {
+      if (e.target === customizeDrawer) {
+        customizeDrawer.classList.add('hidden');
+      }
+    });
+
+    // Handle Local Image File Uploads seamlessly
+    function handleImageUpload(event, targetImgId) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const imgEl = document.getElementById(targetImgId);
+        if (imgEl) {
+          imgEl.src = e.target.result;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Helper to extract YouTube Video ID from any URL format
+    function extractYouTubeID(url) {
+      const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[7].length === 11) ? match[7] : null;
+    }
+
+    function showToast(text) {
+      toastMsg.textContent = text;
+      toastMsg.style.opacity = '1';
+      setTimeout(() => {
+        toastMsg.style.opacity = '0';
+      }, 2600);
+    }
+// Apply Customized Text & Video Changes
+    saveCustomizeBtn.addEventListener('click', () => {
+      // Hero
+      const heroTitle = document.getElementById('input-hero-title').value.trim();
+      const heroSubtitle = document.getElementById('input-hero-subtitle').value.trim();
+      if (heroTitle) document.getElementById('display-hero-title').textContent = heroTitle;
+      if (heroSubtitle) document.getElementById('display-hero-subtitle').textContent = heroSubtitle;
+
+      // Letter
+      const letterHeading = document.getElementById('input-letter-heading').value.trim();
+      const letterBody = document.getElementById('input-letter-body').value.trim();
+      if (letterHeading) document.getElementById('display-letter-heading').textContent = letterHeading;
+      if (letterBody) {
+        document.getElementById('display-letter-body').innerHTML = letterBody
+          .split('\n\n')
+          .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+          .join('');
+      }
+
+      // Sticker Badge
+      const badgeText = document.getElementById('input-badge-text').value.trim();
+      if (badgeText) {
+        document.getElementById('display-badge-text').innerHTML = badgeText.replace(/\s+/, '<br>');
+      }
+
+      // YouTube URL
+      const ytUrl = document.getElementById('input-youtube-url').value.trim();
+      const extractedId = extractYouTubeID(ytUrl);
+      if (extractedId) {
+        ytIframe.src = `https://www.youtube.com/embed/${extractedId}?enablejsapi=1&rel=0`;
+        trackCaption.textContent = '♪ Custom Birthday Song';
+      }
+
+      // Closing Message
+      const closingMsg = document.getElementById('input-closing-message').value.trim();
+      if (closingMsg) {
+        document.getElementById('display-closing-message').innerHTML = closingMsg.replace(/\n/g, '<br>');
+      }
+
+      customizeDrawer.classList.add('hidden');
+      showToast('Birthday card updated! ✨');
+      launchConfetti(35);
+    });
+  </script>
+</body>
+</html>
